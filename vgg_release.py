@@ -8,14 +8,18 @@ import scipy
 from scipy import misc
 from scipy import ndimage as ndi
 from skimage import feature
+from scipy.misc import imsave
+from scipy.misc import imresize
 import json
 import time
 import argparse
+import subprocess
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-g', '--graphical',action='store_const', const=True)
 parser.add_argument('-s', '--save',action='store_const', const=True)
+parser.add_argument('-lgs', '--layer',action='store_const', const=True)
 res = parser.parse_args()
 
 def tanh(x):
@@ -85,6 +89,23 @@ def recognize(w1, w2, w3a, w3b, w4a, w4b, w5, w6, w7, img, res):
         plt.savefig('./nn_out/'+str(i)+'.png')
     if res.graphical:
         plt.show()
+    if res.layer:
+        try:
+            term_in="mkdir ./nn_layers_output_visualizing/"+str(img[26:len(img)-4])
+            subprocess.check_output(term_in, shell=True)
+        except Exception:
+            """mkdir: cannot create directory : File exists"""
+
+        imsave('./nn_layers_output_visualizing/'+str(img[26:len(img)-4])+'/inp.png', _image_)
+        imsave('./nn_layers_output_visualizing/'+str(img[26:len(img)-4])+'/kanny.png', image)
+        imsave('./nn_layers_output_visualizing/'+str(img[26:len(img)-4])+'/conv_1.png', l1)
+        imsave('./nn_layers_output_visualizing/'+str(img[26:len(img)-4])+'/conv_2.png', l2)
+        imsave('./nn_layers_output_visualizing/'+str(img[26:len(img)-4])+'/conv_3.png', l3a)
+        imsave('./nn_layers_output_visualizing/'+str(img[26:len(img)-4])+'/conv_4.png', l4a)
+        imsave('./nn_layers_output_visualizing/'+str(img[26:len(img)-4])+'/fc_1.png', l5)
+        imsave('./nn_layers_output_visualizing/'+str(img[26:len(img)-4])+'/fc_2.png', l6)
+        imsave('./nn_layers_output_visualizing/'+str(img[26:len(img)-4])+'/fc_3.png', np.array([[0,round(float(l7_Output))]]))
+
 
     return l7_Output
 
